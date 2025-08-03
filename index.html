@@ -15,6 +15,7 @@
     <!-- core three.js -->
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
     <script>
 
@@ -36,6 +37,7 @@
         );
         camera.position.set(0, 2, 5);
         camera.lookAt(0, 0, 0);
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
 
         // ✅ Directional Light ที่สร้างเงา
         const light = new THREE.DirectionalLight(0xffffff, 1);
@@ -48,21 +50,7 @@
 
         scene.add(light);
 
-        const loader = new THREE.OBJLoader();
-        loader.load('Model1.obj', function (object) {
-            object.castShadow = true; // ✅ วัตถุนี้สร้างเงา
-            // ตั้งค่า castShadow กับทุก mesh ใน object
-            object.traverse(function (child) {
-                if (child.isMesh) {
-                    child.castShadow = true;
-                    child.receiveShadow = frue;
-                    child.material.side = THREE.DoubleSide;
-                }
-            });
-            scene.add(object);
-        }, undefined, function (error) {
-            console.error('Error loading OBJ:', error);
-        });
+
 
         // ✅ Ambient Light เล็กน้อยให้สว่างรวม
         const ambient = new THREE.AmbientLight(0x404040);
@@ -79,12 +67,26 @@
         plane.receiveShadow = true; // ✅ พื้นรับเงา
         scene.add(plane);
 
-
+    const loader = new THREE.OBJLoader();
+    loader.load('Model1.obj', function (object) {
+        object.castShadow = true; // ✅ วัตถุนี้สร้างเงา
+        // ตั้งค่า castShadow กับทุก mesh ใน object
+        object.traverse(function (child) {
+            if (child.isMesh) {
+                child.castShadow = true;
+                child.receiveShadow = true;
+                
+            }
+        });
+        scene.add(object);
+    }, undefined, function (error) {
+        console.error('Error loading OBJ:', error);
+    });
 
         // ✅ render loop
         function animate(t) {
 
-
+         
 
             renderer.render(scene, camera);
             requestAnimationFrame(animate);
